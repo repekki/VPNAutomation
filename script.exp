@@ -1,0 +1,43 @@
+#!/usr/bin/expect -f
+
+set force_conservative 0  ;# set to 1 to force conservative mode even if
+			  ;# script wasn't run conservatively originally
+if {$force_conservative} {
+	set send_slow {1 .1}
+	proc send {ignore arg} {
+		sleep .1
+		exp_send -s -- $arg
+	}
+}
+
+
+
+set timeout -1
+spawn ./wireguard-install.sh
+match_max 100000
+expect "Welcome to the WireGuard installer!"
+send -- "\r"
+expect "Public interface:"
+send -- "\r"
+expect "WireGuard interface name:"
+send -- "\r"
+expect "Server's WireGuard IPv4:"
+send -- "\r"
+expect "Server's WireGuard IPv6:"
+send -- "\r"
+expect "Server's WireGuard port"
+send -- "\r"
+expect "First DNS resolver to use for the clients"
+send -- "\r"
+expect "Second DNS resolver to use"
+send -- "\r"
+expect "Okay, that was all I needed. "
+send -- "\r"
+sleep 60
+expect "Tell me a name for the client"
+send -- "vpnclient\r"
+expect "WireGuard IPv"
+send -- "\r"
+expect "Client's WireGuard IPv6:"
+send -- "\r"
+expect eof
